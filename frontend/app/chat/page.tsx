@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState,useCallback} from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
@@ -125,6 +125,26 @@ export default function ChatPage() {
     setMobileView("chat");
     setIsNewChatOpen(false);
   }
+
+  useEffect(() => {
+  const interval = setInterval(async () => {
+    try {
+      const data = await fetchConversations();
+
+      setConversations((prev) => {
+        if (JSON.stringify(prev) === JSON.stringify(data)) {
+          return prev;
+        }
+
+        return data;
+      });
+    } catch {
+      // Ignore polling errors
+    }
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
 
   return (
     <div className="flex h-dvh overflow-hidden bg-white">
