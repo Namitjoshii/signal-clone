@@ -1,21 +1,38 @@
-![alt text](image-1.png)
-![alt text](image-2.png)
-
-
-
 # Secure Messaging Platform (Signal Clone)
 
-A full-stack Signal Messenger clone built as an SDE Full Stack Assignment. The application replicates the core messaging experience of Signal using Next.js, FastAPI, SQLite, and WebSockets.
+A full-stack messaging application inspired by Signal, built using **Next.js**, **FastAPI**, **SQLite**, and **Native WebSockets**.
 
-## Live Demo
+The application recreates the core messaging experience of Signal, including user authentication, conversation management, and real-time messaging. The project focuses on clean architecture, responsive UI, persistent storage, and real-time communication while keeping authentication and encryption mocked as specified in the assignment.
 
-Frontend: <ADD_FRONTEND_URL>
+---
 
-Backend: <ADD_BACKEND_URL>
+# Live Demo
 
-## GitHub Repository
+**Frontend (Vercel)**
 
-<ADD_GITHUB_REPO_URL>
+https://signal-clone-five.vercel.app
+
+**Backend (Render)**
+
+https://signal-clone-faec.onrender.com
+
+---
+
+# GitHub Repository
+
+https://github.com/Namitjoshii/signal-clone
+
+---
+
+# Screenshots
+
+## Login
+
+![Login](image-1.png)
+
+## Chat Interface
+
+![Chat](image-2.png)
 
 ---
 
@@ -23,68 +40,69 @@ Backend: <ADD_BACKEND_URL>
 
 ## Authentication
 
-- Mock OTP Authentication (OTP: `123456`)
-- Register using phone number
-- Login with existing account
+- Mock phone number registration
+- Fixed OTP verification (`123456`)
+- User login
 - Session persistence using Local Storage
-- Mock JWT Authentication
+- Mock JWT authentication
+
+---
 
 ## Conversations
 
-- View conversation list
-- One-to-one conversations
-- Group conversations
-- Sidebar with recent conversations
-- Conversation selection
+- View all conversations
+- Create new direct conversations
+- Recent conversation sidebar
+- Automatic conversation updates
+- Responsive chat layout
+
+---
 
 ## Real-Time Messaging
 
 - Native WebSocket implementation
 - Instant message delivery
-- Two-way real-time communication
-- Automatic reconnection
+- Two-way communication
 - Persistent message history
+- Automatic WebSocket reconnection
 - Message timestamps
+
+---
 
 ## Database
 
 - SQLite database
+- Persistent users
 - Persistent conversations
 - Persistent messages
-- User management
-- Group management
+- Relational schema using SQLAlchemy ORM
 
 ---
 
 # Tech Stack
 
-## Frontend
-
-- Next.js 15
-- TypeScript
-- Tailwind CSS
-- React Hooks
-- Native WebSocket API
-
-## Backend
-
-- FastAPI
-- SQLAlchemy
-- SQLite
-- Native WebSockets
-- Pydantic
+| Layer | Technology |
+|--------|------------|
+| Frontend | Next.js 15 |
+| Language | TypeScript |
+| Styling | Tailwind CSS |
+| Backend | FastAPI |
+| ORM | SQLAlchemy |
+| Database | SQLite |
+| Validation | Pydantic |
+| Real-Time | Native WebSockets |
 
 ---
 
 # Project Structure
 
-```
+```text
 signal-clone/
-│
+
 ├── backend/
 │   ├── app/
-│   │   ├── api/
 │   │   ├── models/
+│   │   ├── routers/
 │   │   ├── schemas/
 │   │   ├── services/
 │   │   ├── websocket/
@@ -117,12 +135,16 @@ signal-clone/
 - avatar
 - created_at
 
+---
+
 ## Conversations
 
 - id
-- type (direct/group)
+- type
 - name
 - created_at
+
+---
 
 ## Conversation Members
 
@@ -130,42 +152,53 @@ signal-clone/
 - conversation_id
 - user_id
 
+---
+
 ## Messages
 
 - id
 - conversation_id
 - sender_id
 - content
-- status
 - created_at
 
 ---
 
-# API Overview
+# REST API
 
 ## Authentication
 
-```
+```http
 POST /auth/register
 POST /auth/login
 ```
 
 ---
 
+## Users
+
+```http
+GET /users
+```
+
+---
+
 ## Conversations
 
-```
+```http
 GET /conversations
+GET /conversations/{id}
 POST /conversations/direct
 POST /conversations/group
-GET /conversations/{id}
 ```
+
+> Group conversation endpoints are available in the backend for future UI integration.
 
 ---
 
 ## Messages
 
-```
+```http
 GET /messages/{conversation_id}
 POST /messages
 PATCH /messages/{message_id}/read
@@ -173,13 +206,13 @@ PATCH /messages/{message_id}/read
 
 ---
 
-## WebSocket
+# WebSocket
 
-```
+```text
 ws://<backend-url>/ws/{conversation_id}/{user_id}
 ```
 
-Supports:
+Supports
 
 - Real-time messaging
 - Automatic reconnection
@@ -187,7 +220,7 @@ Supports:
 
 ---
 
-# Setup
+# Local Setup
 
 ## Backend
 
@@ -196,14 +229,30 @@ cd backend
 
 python -m venv venv
 
-pip install -r requirements.txt
+source venv/bin/activate
+```
 
+Windows
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+Run server
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-Runs on:
+Backend runs on
 
-```
+```text
 http://127.0.0.1:8000
 ```
 
@@ -219,19 +268,30 @@ npm install
 npm run dev
 ```
 
-Runs on:
+Frontend runs on
 
-```
+```text
 http://localhost:3000
 ```
 
 ---
 
-# Authentication
+## Environment Variables
 
-Mock OTP
+Create a `.env.local` file inside the frontend directory.
 
+```env
+NEXT_PUBLIC_API_URL=http://127.0.0.1:8000
+NEXT_PUBLIC_WS_URL=ws://127.0.0.1:8000
 ```
+
+---
+
+# Mock Authentication
+
+OTP
+
+```text
 123456
 ```
 
@@ -239,33 +299,42 @@ Mock OTP
 
 # Architecture
 
-```
-Next.js Frontend
-        │
- REST APIs
-        │
- FastAPI Backend
-        │
- SQLAlchemy ORM
-        │
-    SQLite
-        │
- Native WebSocket
+```text
+                 Next.js Frontend
+                        │
+                REST API + WebSocket
+                        │
+                 FastAPI Backend
+                        │
+                  SQLAlchemy ORM
+                        │
+                     SQLite
 ```
 
 ---
 
 # Key Highlights
 
-- Modern Signal-inspired UI
+- Signal-inspired user interface
 - FastAPI REST APIs
-- Native WebSocket implementation
-- SQLite persistence
+- Native WebSocket communication
+- SQLite persistent storage
 - Real-time messaging
-- Group conversations
-- Clean component-based architecture
+- Clean modular architecture
 - TypeScript frontend
-- Modular backend services
+- Responsive layout
+- Component-based frontend
+- SQLAlchemy ORM
+
+---
+
+# Assumptions
+
+- Authentication is mocked as allowed in the assignment.
+- OTP verification uses a fixed OTP (`123456`).
+- End-to-end encryption is intentionally mocked.
+- Voice/Video calls, Stories, and Linked Devices are not implemented.
+- Group conversation backend endpoints are implemented, while complete frontend integration can be extended in future iterations.
 
 ---
 
@@ -273,13 +342,13 @@ Next.js Frontend
 
 - Typing indicators
 - Read receipts
-- Search conversations
-- Attachments
 - Emoji reactions
-- Voice and video calling
-- End-to-end encryption
-- Dark mode
+- Media attachments
 - Push notifications
+- End-to-end encryption
+- Voice & Video Calling
+- Dark Mode
+
 
 ---
 
@@ -287,6 +356,4 @@ Next.js Frontend
 
 **Namit Joshi**
 
-B.Tech Computer Science Engineering
-
-Bennett University
+GitHub: https://github.com/Namitjoshii
