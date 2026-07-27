@@ -1,0 +1,65 @@
+import { getToken, getUserId } from "@/lib/auth-storage";
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL!;
+
+export type UserListResponse = {
+  id: number;
+  username: string;
+  display_name: string;
+  phone: string;
+};
+
+export class UsersApiError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.status = status;
+    this.name = "UsersApiError";
+  }
+}
+
+async function parseErrorMessage(response: Response): Promise<string> {
+  try {
+    const data = (await response.json()) as {
+      detail?: string | { msg?: string }[];
+    };
+
+    if (typeof data.detail === "string") {
+      return data.detail;
+    }
+
+    if (Array.isArray(data.detail) && data.detail[0]?.msg) {
+      return data.detail[0].msg;
+    }
+  } catch {
+    // Fall back to generic message below.
+  }
+
+  return "Failed to load users. Please try again.";
+}
+
+export async function fetchUsers(): Promise<UserListResponse[]> {
+  const token = getToken();
+  const userId = getUserId();
+
+  if (!token || userId === null) {
+    throw new UsersApiError(401, "Not authenticated");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/users`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "X-User-Id": String(userId),
+    },
+  });
+
+  if (!response.ok) {
+    throw new UsersApiError(
+      response.status,
+      await parseErrorMessage(response),
+    );
+  }
+
+  return response.json() as Promise<UserListResponse[]>;
+}

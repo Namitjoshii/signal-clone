@@ -10,6 +10,7 @@ type SidebarProps = {
   onSelect: (id: string) => void;
   isLoading?: boolean;
   error?: string;
+  onNewChat: () => void;
 };
 
 export default function Sidebar({
@@ -18,6 +19,7 @@ export default function Sidebar({
   onSelect,
   isLoading = false,
   error = "",
+  onNewChat,
 }: SidebarProps) {
   const [search, setSearch] = useState("");
 
@@ -39,6 +41,7 @@ export default function Sidebar({
           <button
             type="button"
             aria-label="New chat"
+            onClick={onNewChat}
             className="flex h-9 w-9 items-center justify-center rounded-full text-signal-muted transition-colors hover:bg-signal-hover hover:text-signal-text"
           >
             <svg

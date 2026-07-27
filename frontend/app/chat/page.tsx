@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import ChatWindow from "@/components/ChatWindow";
+import NewChatModal from "@/components/NewChatModal";
 import { mapConversationToListItem } from "@/lib/conversation-utils";
 import {
   ConversationsApiError,
@@ -23,6 +24,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [userId, setUserId] = useState<number | null>(null);
+  const [isNewChatOpen, setIsNewChatOpen] = useState(false);
 
   useEffect(() => {
     const token = getToken();
@@ -108,6 +110,22 @@ export default function ChatPage() {
     setMobileView("list");
   }
 
+  function handleConversationCreated(conversation: ConversationResponse) {
+    setConversations((prev) => {
+      const exists = prev.some((item) => item.id === conversation.id);
+      if (exists) {
+        return prev.map((item) =>
+          item.id === conversation.id ? conversation : item,
+        );
+      }
+      return [conversation, ...prev];
+    });
+
+    setSelectedConversation(conversation);
+    setMobileView("chat");
+    setIsNewChatOpen(false);
+  }
+
   return (
     <div className="flex h-dvh overflow-hidden bg-white">
       <div
@@ -123,6 +141,7 @@ export default function ChatPage() {
           onSelect={handleSelect}
           isLoading={isLoading}
           error={error}
+          onNewChat={() => setIsNewChatOpen(true)}
         />
       </div>
 
@@ -140,6 +159,14 @@ export default function ChatPage() {
           showBackButton={mobileView === "chat"}
         />
       </div>
+
+      <NewChatModal
+        isOpen={isNewChatOpen}
+        onClose={() => setIsNewChatOpen(false)}
+        onConversationCreated={handleConversationCreated}
+        existingConversations={conversations}
+        currentUserId={userId}
+      />
     </div>
   );
 }

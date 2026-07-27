@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import init_db
-from app.routers import auth, conversations, messages
+from app.routers import auth, conversations, messages, users
 from app.websocket import router as websocket_router
 
 
@@ -27,6 +27,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(conversations.router)
 app.include_router(messages.router)
+app.include_router(users.router)
 app.include_router(websocket_router)
 
 

@@ -75,3 +75,33 @@ export async function fetchConversations(): Promise<ConversationResponse[]> {
 
   return response.json() as Promise<ConversationResponse[]>;
 }
+
+export async function createDirectConversation(
+  userId: number,
+): Promise<ConversationResponse> {
+  const token = getToken();
+  const currentUserId = getUserId();
+
+  if (!token || currentUserId === null) {
+    throw new ConversationsApiError(401, "Not authenticated");
+  }
+
+  const response = await fetch(`${API_BASE_URL}/conversations/direct`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "X-User-Id": String(currentUserId),
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ user_id: userId }),
+  });
+
+  if (!response.ok) {
+    throw new ConversationsApiError(
+      response.status,
+      await parseErrorMessage(response),
+    );
+  }
+
+  return response.json() as Promise<ConversationResponse>;
+}

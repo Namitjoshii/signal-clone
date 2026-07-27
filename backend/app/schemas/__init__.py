@@ -6,7 +6,7 @@ from app.schemas.conversation import (
     CreateGroupConversationRequest,
 )
 from app.schemas.message import MessageResponse, SendMessageRequest
-from app.schemas.user import UserResponse
+from app.schemas.user import UserListResponse, UserResponse
 
 __all__ = [
     "ConversationMemberResponse",
@@ -18,5 +18,6 @@ __all__ = [
     "LoginRequest",
     "LoginResponse",
     "RegisterRequest",
+    "UserListResponse",
     "UserResponse",
 ]
